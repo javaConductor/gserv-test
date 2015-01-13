@@ -25,24 +25,31 @@
 package io.github.javaconductor.gserv.tester
 
 import groovy.util.logging.Log4j
+import groovyx.gpars.dataflow.Promise
 import io.github.javaconductor.gserv.GServ
 import io.github.javaconductor.gserv.requesthandler.AbstractRequestContext
 import io.github.javaconductor.gserv.requesthandler.RequestContext
 
 /**
- * Exchange Wrapper usually used for Filters
+ * Context Wrapper used for unit testing.
  */
 @Log4j
 class TestRequestContext extends AbstractRequestContext {
-    OutputStream  _responseBody
+    OutputStream _responseBody
     def _wasClosed = false
     Closure _callBack
 
+    def TestRequestContext(String method, Map headers, String path, byte[] data, Promise promise) {
+        this(method, headers, path, data, promise, null)
+    }
 
-    def TestRequestContext(String method, Map headers, String path,  byte[] data, Closure callBack) {
-
-        this._callBack = callBack
-        this.requestBody = new ByteArrayInputStream(data ?: new byte[0] )
+    def TestRequestContext(String method, Map headers, String path, byte[] data, Promise promise, Closure callBack) {
+        this._callBack = ({ code, hdrs, bytesData ->
+            promise << [statusCode: code, responseHeaders: hdrs, output: bytesData]
+            if (callBack)
+                callBack(code, hdrs, bytesData)
+        });
+        this.requestBody = new ByteArrayInputStream(data ?: new byte[0])
         this.responseBody = _responseBody = new ByteArrayOutputStream()
         setAttribute(GServ.contextAttributes.isWrapper, true)
         this.requestURI = new URI(path)
@@ -52,8 +59,9 @@ class TestRequestContext extends AbstractRequestContext {
 
     @Override
     def close() {
-        if(_wasClosed){
-            log.warn("RequestContext called multiple times.")
+        if (_wasClosed) {
+            log.warn("RequestContext.close() called multiple times.")
+            return
         }
         _wasClosed = true
         _callBack(responseCode, responseHeaders, _responseBody.toByteArray())
@@ -61,14 +69,18 @@ class TestRequestContext extends AbstractRequestContext {
 
     @Override
     def setStreams(InputStream is, OutputStream os) {
-        this.requestBody=is
+        this.requestBody = is
         this.responseBody = os
     }
 
-
-    void sendResponseHeaders( int responseCode, long size){
+    void sendResponseHeaders(int responseCode, long size) {
         this.responseCode = responseCode
         /// really can't use the size - yet
+    }
+
+    @Override
+    Object isClosed() {
+        _wasClosed
     }
 
 }

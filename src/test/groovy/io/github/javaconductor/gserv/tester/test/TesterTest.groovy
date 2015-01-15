@@ -114,15 +114,10 @@ class TesterTest {
 
         InstanceTester t = new InstanceTester(cfg)
         Promise p = t.run("GET", [:], "/app", null)
-        p.then { resp ->
-            def code = resp.statusCode
-            def headers = resp.responseHeaders
-            def outputStr = new String(resp.output)
-            assertEquals(outputStr,"Hello")/// TODO this is SO wrong !!! does '==' work?
-        }// run
         assertNotNull( p.get() )
         def data = p.get()
         assertEquals(data.statusCode, 200)
+        assertEquals(outputStr,"Hello")
     }
 
 }

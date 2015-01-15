@@ -7,7 +7,7 @@ import io.github.javaconductor.gserv.GServResource
 import io.github.javaconductor.gserv.configuration.GServConfig
 import io.github.javaconductor.gserv.tester.InstanceTester
 import io.github.javaconductor.gserv.tester.ResourceTester
-import org.junit.Assert
+import static org.junit.Assert.*
 import org.junit.Test
 import java.util.Map
 
@@ -118,10 +118,11 @@ class TesterTest {
             def code = resp.statusCode
             def headers = resp.responseHeaders
             def outputStr = new String(resp.output)
-            assert  (outputStr.equals("Hello2"))/// TODO this is SO wrong !!! does '==' work?
+            assertEquals(outputStr,"Hello")/// TODO this is SO wrong !!! does '==' work?
         }// run
-        println p.get()
-
+        assertNotNull( p.get() )
+        def data = p.get()
+        assertEquals(data.statusCode, 200)
     }
 
 }

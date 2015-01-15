@@ -55,5 +55,3 @@ GServResource  res =  GServ.Resource("/app"){
 </pre>
 
 
-
-

@@ -1,7 +1,7 @@
 package io.github.javaconductor.gserv.tester
 
 import groovyx.gpars.dataflow.DataflowVariable
-import io.github.javaconductor.gserv.ResourceAction
+import io.github.javaconductor.gserv.actions.ResourceAction
 import io.github.javaconductor.gserv.configuration.GServConfig
 import io.github.javaconductor.gserv.requesthandler.ActionRunner
 import io.github.javaconductor.gserv.requesthandler.RequestContext

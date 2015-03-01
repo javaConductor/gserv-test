@@ -1,16 +1,27 @@
 apply plugin: 'maven'
 apply plugin: 'groovy'
+apply plugin: 'java'
 
 sourceCompatibility = 1.7
-version = '1.0.0'
+version = '0.9.7'
 group='io.github.javaconductor'
 
 repositories {
     mavenLocal()
-    mavenCentral()
+    jcenter()
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 dependencies {
-    compile "io.github.javaconductor:gserv:0.9.1"
+    compile "io.github.javaconductor:gserv:0.9.7+"
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+artifacts {
+    archives sourcesJar
+//    archives groovydocJar
 }

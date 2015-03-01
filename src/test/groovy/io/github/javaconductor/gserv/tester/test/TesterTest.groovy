@@ -2,9 +2,9 @@ package io.github.javaconductor.gserv.tester.test
 
 import groovyx.gpars.dataflow.Promise
 import io.github.javaconductor.gserv.GServ
-import io.github.javaconductor.gserv.GServFactory
-import io.github.javaconductor.gserv.GServResource
 import io.github.javaconductor.gserv.configuration.GServConfig
+import io.github.javaconductor.gserv.factory.GServFactory
+import io.github.javaconductor.gserv.resources.GServResource
 import io.github.javaconductor.gserv.tester.InstanceTester
 import io.github.javaconductor.gserv.tester.ResourceTester
 import static org.junit.Assert.*
@@ -23,6 +23,7 @@ class TesterTest {
             header("Content-Type", "text/plain")
             write "Hello"
         }
+
         get ('/error'){
             header("Content-Type", "text/plain")
             throw new RuntimeException("Testing exceptions handling in tests.")
@@ -117,7 +118,7 @@ class TesterTest {
         assertNotNull( p.get() )
         def data = p.get()
         assertEquals(data.statusCode, 200)
-        assertEquals(outputStr,"Hello")
+        assertEquals(new String(data.output),"Hello")
     }
 
 }

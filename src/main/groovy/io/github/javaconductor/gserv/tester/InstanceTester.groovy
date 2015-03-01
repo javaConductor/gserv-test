@@ -49,7 +49,7 @@ class InstanceTester {
         def port = 11001
         if (path.startsWith('/')) path = path.substring(1)
 
-        RequestContext context = new TestRequestContext(method, requestHeaders, path, data, promise, callback)
+        RequestContext context = new TestRequestContext(config, method, requestHeaders, path, data, promise, callback)
         ResourceAction action =  config.matchAction(context)
         if(!action){
             promise << [statusCode: 404, responseHeaders:[:], output:"NO such action".bytes]

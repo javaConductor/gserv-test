@@ -27,6 +27,7 @@ package io.github.javaconductor.gserv.tester
 import groovy.util.logging.Log4j
 import groovyx.gpars.dataflow.Promise
 import io.github.javaconductor.gserv.GServ
+import io.github.javaconductor.gserv.configuration.GServConfig
 import io.github.javaconductor.gserv.requesthandler.AbstractRequestContext
 import io.github.javaconductor.gserv.requesthandler.RequestContext
 
@@ -39,11 +40,12 @@ class TestRequestContext extends AbstractRequestContext {
     def _wasClosed = false
     Closure _callBack
 
-    def TestRequestContext(String method, Map headers, String path, byte[] data, Promise promise) {
-        this(method, headers, path, data, promise, null)
+    def TestRequestContext(GServConfig config, String method, Map headers, String path, byte[] data, Promise promise) {
+        this(config,method, headers, path, data, promise, null)
     }
 
-    def TestRequestContext(String method, Map headers, String path, byte[] data, Promise promise, Closure callBack) {
+    def TestRequestContext(GServConfig config, String method, Map headers, String path, byte[] data, Promise promise, Closure callBack) {
+        super(config)
         this._callBack = ({ code, hdrs, bytesData ->
             promise << [statusCode: code, responseHeaders: hdrs, output: bytesData]
             if (callBack)
